@@ -1,0 +1,14 @@
+nelmio_api_doc:
+    documentation:
+        info:
+            title: Paysera Fund Transfer API
+            description: |
+                Secure fund transfer API with Redis distributed locking,
+                MySQL transaction integrity, and idempotency support.
+            version: 1.0.0
+        servers:
+            - url: http://localhost:8080
+              description: Local Docker environment
+    areas:
+        path_patterns:
+            - ^/api

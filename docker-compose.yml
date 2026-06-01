@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+
+  php:
+    build: .
+    ports:
+      - '8080:80'
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    environment:
+      APP_ENV: dev
+      APP_SECRET: K9xP7mQ2FN8rT4yL6cW1szA5dF3jH7sB
+      DATABASE_URL: mysql://app:secret@db:3306/paysera?serverVersion=8.0
+      DATABASE_URL_FOR_TEST_ENV: mysql://root:rootsecret@db:3306/paysera?serverVersion=8.0
+      REDIS_URL: redis://redis:6379
+      DEFAULT_URI: http://localhost:8080
+
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_DATABASE: paysera
+      MYSQL_USER: app
+      MYSQL_PASSWORD: secret
+      MYSQL_ROOT_PASSWORD: rootsecret
+    ports:
+      - '3306:3306'
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: [ 'CMD', 'mysqladmin', 'ping', '-h', 'localhost', '-u', 'root', '-prootsecret' ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - '6379:6379'
+
+volumes:
+  db_data:
